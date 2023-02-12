@@ -13,6 +13,14 @@ export default {
   components: {
     HomePage,
   },
+  computed: {
+    searchImages() {
+    return true;
+    }
+  },
+  mounted() {
+    console.log(this.searchImages, "ife");
+  },
 };
 </script>
 
