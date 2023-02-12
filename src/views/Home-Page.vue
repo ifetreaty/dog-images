@@ -1,47 +1,73 @@
 <template>
   <div class="home">
+    <link href="./clusterize.css" rel="stylesheet" />
     <nav class="navbar">
       <form class="searchbar">
-      <label>
-        <span class="screen-reader-only">Search:</span>
-        <input v-model="tag" placeholder="search for a dog" type="text" class="searchbar-input" />
-      </label>
-      <button type="submit" class="btn btn--green btn--go" @click.prevent="searchImages">
-        Go
-      </button>
-    </form>
+        <label>
+          <span class="screen-reader-only">Search:</span>
+          <input
+            v-model="tag"
+            placeholder="search for a dog"
+            type="text"
+            class="searchbar-input"
+          />
+        </label>
+        <button
+          type="submit"
+          class="btn btn--green btn--go"
+          @click.prevent="searchImages"
+        >
+          Go
+        </button>
+      </form>
     </nav>
-    <div class="wrapper">
-      <p v-if="loading" class="text-centered">
-        Loading...
-      </p>
-      <ul v-else class="image-card-grid"></ul>
+    <div id="scrollArea" class="clusterize-scroll wrapper">
+      <p v-if="loading" class="text-centered">Loading...</p>
+      <ul v-else id="contentArea" class="clusterize-content image-card-grid">
+        <image-card v-for="image in images" :key="image.id" :image="image" />
+        <li class="clusterize-no-data">Loading data…</li>
+      </ul>
     </div>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import ImageCard from "../components/ImageCard.vue";
 
 export default {
+  components: { ImageCard },
   name: "HomePage",
   data() {
     return {
       loading: false,
       tag: "",
       images: [],
+      scrollId: "scrollArea",
+      contentId: "contentArea",
+      rows_in_block: 100
     };
   },
   computed: {
     ...mapGetters(["getImages", "getNotFound"]),
   },
+  mounted() {
+    let clusterizeScript = document.createElement("script");
+    clusterizeScript.setAttribute("src", "./clusterize.min.js");
+    document.head.appendChild(clusterizeScript);
+  },
   methods: {
     ...mapActions(["fetchDogImages", "searchImages"]),
   },
   async created() {
+    // console.log(this.$store, "bernard");
+    // this.searchImages();
     this.images = await this.fetchDogImages();
     console.log(this.images);
   },
+  // setup(__, { root }) {
+  //   const store = root.$store;
+  // },
 };
 </script>
 
@@ -65,7 +91,7 @@ export default {
 }
 .image-card-grid {
   list-style: none;
-  margin: .5rem 0;
+  margin: 0.5rem 0;
   padding: 0;
   display: flex;
   align-items: flex-start;
@@ -76,7 +102,7 @@ export default {
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  background: #F0F0F0;
+  background: #f0f0f0;
 }
 .searchbar {
   width: 300px;
@@ -91,7 +117,7 @@ export default {
   }
 }
 .searchbar-input {
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   border-radius: 20px;
   font-size: 1rem;
   border: 1px solid gray;
@@ -102,7 +128,7 @@ export default {
   }
 }
 .btn {
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   font-size: 1rem;
   border-radius: 20px;
   background: transparent;
@@ -114,7 +140,7 @@ export default {
   font-weight: bold;
 }
 .btn--go {
-  padding: .5rem 2rem;
+  padding: 0.5rem 2rem;
   margin-left: 1rem;
 }
 </style>
