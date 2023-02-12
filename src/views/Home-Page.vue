@@ -4,23 +4,46 @@
       <form class="searchbar">
       <label>
         <span class="screen-reader-only">Search:</span>
-        <input placeholder="search for a dog" type="text" class="searchbar-input" />
+        <input v-model="tag" placeholder="search for a dog" type="text" class="searchbar-input" />
       </label>
-      <button type="submit" class="btn btn--green btn--go">
+      <button type="submit" class="btn btn--green btn--go" @click.prevent="searchImages">
         Go
       </button>
     </form>
     </nav>
     <div class="wrapper">
-      <p class="text-centered">
+      <p v-if="loading" class="text-centered">
         Loading...
       </p>
-      <ul class="image-card-grid">
-      <p>{image card}</p>
-    </ul>
+      <ul v-else class="image-card-grid"></ul>
     </div>
   </div>
 </template>
+
+<script>
+import { mapActions, mapGetters } from "vuex";
+
+export default {
+  name: "HomePage",
+  data() {
+    return {
+      loading: false,
+      tag: "",
+      images: [],
+    };
+  },
+  computed: {
+    ...mapGetters(["getImages", "getNotFound"]),
+  },
+  methods: {
+    ...mapActions(["fetchDogImages", "searchImages"]),
+  },
+  async created() {
+    this.images = await this.fetchDogImages();
+    console.log(this.images);
+  },
+};
+</script>
 
 <style lang="scss">
 .screen-reader-only {
