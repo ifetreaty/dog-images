@@ -6,7 +6,7 @@
         <label>
           <span class="screen-reader-only">Search:</span>
           <input
-            v-model="tag"
+            v-model="dogBreedSearch"
             placeholder="search for a dog"
             type="text"
             class="searchbar-input"
@@ -41,7 +41,7 @@ export default {
   data() {
     return {
       loading: false,
-      tag: "",
+      dogBreedSearch: "",
       images: [],
       scrollId: "scrollArea",
       contentId: "contentArea",
@@ -49,7 +49,7 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(["getImages", "getNotFound"]),
+    ...mapGetters(["getImages", "getNotFound", "getDogInfo"]),
   },
   mounted() {
     let clusterizeScript = document.createElement("script");
@@ -57,17 +57,12 @@ export default {
     document.head.appendChild(clusterizeScript);
   },
   methods: {
-    ...mapActions(["fetchDogImages", "searchImages"]),
+    ...mapActions(["fetchDogImages", "searchImages", "dogInfo"]),
   },
   async created() {
-    // console.log(this.$store, "bernard");
-    // this.searchImages();
     this.images = await this.fetchDogImages();
     console.log(this.images);
   },
-  // setup(__, { root }) {
-  //   const store = root.$store;
-  // },
 };
 </script>
 

@@ -8,31 +8,40 @@ export const store = new Vuex.Store({
   state: {
     dogImages: [],
     isNotFound: false,
+    dogInfo: {},
   },
   mutations: {
     setImages(state, images) {
       state.dogImages = images;
     },
     setNotFound(state, isNotFound) {
-      state.isNotFound = isNotFound;[[]]
+      state.isNotFound = isNotFound;
+      [[]];
+    },
+    setDogInfo(state, dogInfo) {
+      state.dogInfo = dogInfo;
     },
   },
   actions: {
     fetchDogImages(context) {
       return $http.get("breed/greyhound/images").then((response) => {
         context.commit("setImages", response?.data?.message);
-        return response?.data?.message
+        return response?.data?.message;
       });
     },
-    searchImages(context, searchParam) {
-      if (searchParam.length > 0) {
+    searchImages(context) {
+      let url = $http.get("breed/greyhound/images");
+      let searchParam = url.split("/");
+      let exactBreed = searchParam[3];
+      console.log(exactBreed, "ifeolu");
+      if (exactBreed > 0) {
         this.loading = true;
         return $http
-          .get("breed" + searchParam)
+          .get("breed" + exactBreed)
           .then(async (response) => {
-            const data = await response.data;
+            const photos = await response.data;
             context.commit("setNotFound", false);
-            context.commit("setImages", data);
+            context.commit("setImages", photos);
             this.loading = false;
           })
           .catch(() => {
@@ -42,6 +51,9 @@ export const store = new Vuex.Store({
         context.commit("setNotFound", false);
       }
     },
+    dogInfo() {
+      this.$router.push({ name: "/about" });
+    },
   },
   getters: {
     getImages(state) {
@@ -49,6 +61,9 @@ export const store = new Vuex.Store({
     },
     getNotFound(state) {
       return state.isNotFound;
+    },
+    getDogInfo(state) {
+      return state.dogInfo;
     },
   },
 });
